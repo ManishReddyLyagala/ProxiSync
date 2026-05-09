@@ -1,0 +1,98 @@
+<div *ngIf="mobileOpen() && storage.getUser()" 
+     (click)="toggleMobile()" 
+     class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden">
+</div>
+
+@if(storage.getUser()){
+<aside 
+  class="fixed top-0 left-0 h-full z-50 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transition-all duration-300 ease-in-out flex flex-col"
+  [class.w-16]="!expanded() && !mobileOpen()"
+  [class.w-64]="expanded() || mobileOpen()"
+  [class.-translate-x-full]="!mobileOpen() && !isDesktop()"
+  [class.translate-x-0]="mobileOpen() || isDesktop()">
+  <div class="hidden lg:flex items-center h-16 transition-all duration-300 px-4"
+       [class.justify-center]="!expanded()"
+       [class.justify-between]="expanded()">
+    <div class="overflow-hidden flex items-center transition-all duration-300" [class.w-0]="!expanded()" [class.w-auto]="expanded()">
+      <span class="text-white p-1 material-icons bg-blue-500 rounded-2xl mr-2">bolt</span> 
+      <span class="font-bold text-lg text-blue-600 dark:text-blue-400 truncate mr-2">ProxiSync</span>
+    </div>
+    
+    <button (click)="toggleExpand()" class="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors flex-shrink-0">
+      <span class="material-icons text-gray-500">{{ expanded() ? 'menu_open' : 'menu' }}</span>
+    </button>
+  </div>
+
+  <div *ngIf="mobileOpen()" class="lg:hidden flex items-center p-4 border-b dark:border-slate-800 mb-2">
+      <span class="text-white p-1 material-icons bg-blue-500 rounded-2xl mr-2">bolt</span> 
+    <span class="font-bold text-xl text-blue-600 dark:text-blue-400 truncate ">ProxiSync</span>
+  </div>
+
+  <nav class="flex-1 flex flex-col gap-2 px-2 mt-4 lg:mt-0">
+    <button (click)="navigate('/chats')" class="nav-item group" [class.active-link]="isActive('/chats')">
+      <span class="material-icons">chat</span>
+      
+      <div class="overflow-hidden transition-all duration-300 flex items-center" 
+           [class.w-0]="!expanded() && !mobileOpen()" 
+           [class.w-40]="expanded() || mobileOpen()">
+        <span class="ml-4 font-medium whitespace-nowrap">Chats</span>
+      </div>
+
+      <span *ngIf="!expanded() && !mobileOpen()" class="tooltip">Chats</span>
+    </button>
+
+    <button (click)="navigate('/calls')" class="nav-item group" [class.active-link]="isActive('/calls')">
+      <span class="material-icons">call</span>
+      <div class="overflow-hidden transition-all duration-300 flex items-center" 
+           [class.w-0]="!expanded() && !mobileOpen()" 
+           [class.w-40]="expanded() || mobileOpen()">
+        <span class="ml-4 font-medium whitespace-nowrap">Calls</span>
+      </div>
+      <span *ngIf="!expanded() && !mobileOpen()" class="tooltip">Calls</span>
+    </button>
+
+    <button (click)="navigate('/people')" class="nav-item group" [class.active-link]="isActive('/people')">
+      <span class="material-icons">people</span>
+      <div class="overflow-hidden transition-all duration-300 flex items-center" 
+           [class.w-0]="!expanded() && !mobileOpen()" 
+           [class.w-40]="expanded() || mobileOpen()">
+        <span class="ml-4 font-medium whitespace-nowrap">People</span>
+      </div>
+      <span *ngIf="!expanded() && !mobileOpen()" class="tooltip">People</span>
+    </button>
+  </nav>
+
+  <div class="p-2 border-t border-gray-100 dark:border-slate-800 mt-auto">
+    <button (click)="navigate('/profile')" class="nav-item group" [class.active-link]="isActive('/profile')">
+      <span class="material-icons">account_circle</span>
+      <div class="overflow-hidden transition-all duration-300 flex items-center" 
+           [class.w-0]="!expanded() && !mobileOpen()" 
+           [class.w-40]="expanded() || mobileOpen()">
+        <span class="ml-4 font-medium whitespace-nowrap">Profile</span>
+      </div>
+      <span *ngIf="!expanded() && !mobileOpen()" class="tooltip">Profile</span>
+    </button>
+
+    <button (click)="logout()" class="nav-item group text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10">
+      <ng-container *ngIf="isLoggingOut(); else logoutIcon">
+        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+        <span class="text-sm font-medium">Logging out...</span>
+      </ng-container>
+      <ng-template #logoutIcon>
+      <span class="material-icons">logout</span>
+      <div class="overflow-hidden transition-all duration-300 flex items-center" 
+           [class.w-0]="!expanded() && !mobileOpen()" 
+           [class.w-40]="expanded() || mobileOpen()">
+        <span class="ml-4 font-medium whitespace-nowrap">Logout</span>
+      </div>
+      <span *ngIf="!expanded() && !mobileOpen()" class="tooltip">Logout</span>
+    </ng-template>
+    </button>
+  </div>
+</aside>
+}

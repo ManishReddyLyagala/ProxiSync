@@ -1,0 +1,210 @@
+/* --- Messages Panel & Scrollbar --- */
+.messages-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.messages-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-panel::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 10px;
+}
+
+.messages-panel::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.message-bubble {
+  word-break: break-word;
+  min-width: 50px;
+  max-width: 80%;
+}
+
+/* --- Emoji Mart Main Container --- */
+::ng-deep emoji-mart {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 400px !important;
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 12px;
+  overflow: hidden !important;
+}
+
+/* --- Category Anchors (Top Bar) --- */
+::ng-deep .emoji-mart-anchors {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  padding: 5px 10px !important;
+  background-color: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+::ng-deep .emoji-mart-anchor {
+  color: #9ca3af !important; /* Light gray for dark theme icons */
+  background: transparent !important; /* Removed white circles */
+  padding: 6px !important;
+  cursor: pointer;
+}
+
+::ng-deep .emoji-mart-anchor svg {
+  fill: currentColor !important; /* Forces SVG to use the icon color */
+}
+
+::ng-deep .emoji-mart-anchor:hover,
+::ng-deep .emoji-mart-anchor-selected {
+  color: #ae65c5 !important; /* Your specific active purple */
+}
+
+::ng-deep .emoji-mart-anchor-bar {
+  background-color: #ae65c5 !important;
+}
+
+/* --- Search Section --- */
+::ng-deep emoji-search {
+  display: block !important;
+}
+
+::ng-deep .emoji-mart-search {
+  padding: 12px 10px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  background-color: #1f2937 !important;
+  position: relative !important;
+}
+
+::ng-deep .emoji-mart-search label{
+  display: none;
+}
+
+::ng-deep .emoji-mart-search input {
+  width: 100% !important;
+  padding: 10px 35px 10px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #4b5563 !important;
+  background-color: #374151 !important;
+  color: #ffffff !important; /* White text for dark theme */
+  outline: none !important;
+}
+
+::ng-deep .emoji-mart-search-icon {
+  display: none;
+}
+
+
+/* --- Emoji List & Scrolling --- */
+::ng-deep .emoji-mart-scroll {
+  flex: 1 1 auto !important;
+  height: 280px !important;
+  overflow-y: auto !important;
+  padding: 0 10px !important;
+  background-color: #1f2937 !important;
+}
+
+::ng-deep .emoji-mart-category-label span {
+  background-color: #1f2937 !important;
+  color: #e4e8ed !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  display: block !important;
+  padding: 8px 10px !important;
+}
+
+::ng-deep .emoji-mart-emoji {
+  padding: 8px !important;
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* --- Empty States & Scrollbar --- */
+::ng-deep .emoji-mart-no-results {
+  background-color: #1f2937 !important;
+  color: #e4e8ed !important;
+  padding: 20px !important;
+  text-align: center !important;
+}
+
+::ng-deep .emoji-mart-no-results-label {
+  color: #e4e8ed !important;
+}
+
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 10px;
+}
+
+/* --- Loader Animation --- */
+.loader {
+  width: 80px;
+  height: 50px;
+  position: relative;
+}
+
+.loader-text {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  color: #C8B6FF;
+  animation: text_713 3.5s ease both infinite;
+  font-size: .8rem;
+  letter-spacing: 1px;
+}
+
+.load {
+  background-color: #9A79FF;
+  border-radius: 50px;
+  display: block;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  position: absolute;
+  transform: translateX(64px);
+  animation: loading_713 3.5s ease both infinite;
+}
+
+.load::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #D1C2FF;
+  border-radius: inherit;
+  animation: loading2_713 3.5s ease both infinite;
+}
+
+/* --- Animations & Responsive --- */
+@keyframes text_713 {
+  0%, 90%, 100% { letter-spacing: 1px; transform: translateX(0px); }
+  40% { letter-spacing: 2px; transform: translateX(26px); }
+  80% { letter-spacing: 1px; transform: translateX(32px); }
+}
+
+@keyframes loading_713 {
+  0%, 90%, 100% { width: 16px; transform: translateX(0px); }
+  40% { width: 100%; transform: translateX(0px); }
+  80% { width: 16px; transform: translateX(64px); }
+}
+
+@keyframes loading2_713 {
+  0%, 100% { transform: translateX(0px); width: 16px; }
+  40% { transform: translateX(0%); width: 80%; }
+  80% { width: 100%; transform: translateX(0px); }
+  90% { width: 80%; transform: translateX(15px); }
+}
+
+@media (max-width: 640px) {
+  ::ng-deep .emoji-mart-preview { display: none !important; }
+  ::ng-deep .emoji-mart { height: 300px !important; width: 90vw !important; }
+}

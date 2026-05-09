@@ -1,0 +1,136 @@
+<div class="flex h-screen w-full bg-white dark:bg-[#071028] overflow-hidden min-h-0">
+  
+  <div class="border-r flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-800 bg-white dark:bg-[#071028] shrink-0"
+       [class.hidden]="isChatSelectedOnMobile()"
+       [class.w-full]="isMobileView() && !isChatSelectedOnMobile()"
+       [class.w-80]="!isMobileView()">
+        
+    <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center shrink-0">
+      <h1 class="text-xl font-bold text-gray-800 dark:text-white">Chats</h1>
+      <div class="flex items-center gap-1 bg-white dark:bg-[#071028] p-1.5 rounded-lg">
+        <button (click)="enableAudio()" 
+                class="flex items-center cursor-pointer justify-center w-10 h-10 rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-gray-800"
+                [class.text-blue-600]="!isMuted" [class.text-gray-400]="isMuted">
+          <span class="material-icons text-[24px]">{{ isMuted ? 'volume_off' : 'volume_up' }}</span>
+        </button>
+        <div class="w-[1px] h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+        <button (click)="newGroupModal.open()" 
+                class="flex items-center cursor-pointer justify-center w-10 h-10 rounded-lg text-gray-500 hover:text-blue-600 dark:hover:bg-gray-800 transition-all">
+          <span class="material-icons text-[24px]">add</span>
+        </button>
+      </div>
+    </div>
+
+<div class="flex-1 max-h-screen min-h-0 overflow-y-auto chat-list-scroll scrollbar-thin scrollbar-thumb-gray-400/60 dark:scrollbar-thumb-slate-600/60 scrollbar-track-transparent/50 scrollbar-thumb-rounded scroll-smooth scroll-py-2">
+      
+      <div *ngIf="loading && convs.length === 0">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="flex items-center gap-3 p-3 mx-2 animate-pulse">
+          <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+          <div class="flex-1 space-y-2">
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <div *ngFor="let c of convs; trackBy: trackByConvId"
+             [class.opacity-60]="c?.isDeleted"
+             class="group flex items-center gap-3 p-3 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200"
+             [ngClass]="{
+                 'opacity-75 bg-gray-50 dark:bg-gray-900/50': c.isBlocked,
+                 'hover:bg-blue-50 dark:hover:bg-[#0c1a3d]': !c.isBlocked
+             }"
+             (click)="clearBadge(c)"
+             [routerLinkActive]="'bg-blue-50 dark:bg-[#0c1a3d]'" 
+             [routerLink]="['/chats/conv', c.conversationId]">
+          
+          <div class="relative flex-shrink-0">
+            <img [src]="getProfileUrl(c)"
+                 class="w-12 h-12 rounded-full object-cover ring-2 ring-transparent transition-all"
+                 [class.grayscale]="c.isBlocked || c.isDeleted"
+                 [class.group-hover:ring-blue-400]="!c.isBlocked"
+                 [class.group-hover:ring-red-400]="c.isBlocked" />
+            
+            <span *ngIf="isConversationOnline(c) && (!c?.isBlocked || !c?.isDeleted)" 
+                  class="absolute bottom-0 right-0 block h-3.5 w-3.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-[#071028]">
+            </span>
+            
+            <div *ngIf="c.isBlocked" class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full">
+              <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.366zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-baseline mb-0.5">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate"
+                    [class.text-gray-500]="c.isBlocked">
+                  {{ c.name }}
+                  <span *ngIf="c?.isDeleted" class="ml-1 text-[8px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-full uppercase">Inactive</span>
+                </h3>
+                
+                <span *ngIf="c.isBlocked" 
+                      class="px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-red-500 rounded shadow-sm">
+                  Blocked
+                </span>
+
+                <span *ngIf="c.friendStatus === 'UnFollowed'" 
+                      class="px-1.5 py-0.5 text-[9px] font-bold uppercase text-gray-800 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 rounded">
+                  Unfollowed
+                </span>
+              </div>
+
+              <span class="text-[10px] font-medium whitespace-nowrap text-gray-500 dark:text-gray-400">
+                {{ formatChatDate(c.lastMessageSentAt) }}
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <p class="text-sm text-gray-600 dark:text-gray-400 truncate pr-4" [class.italic]="c.isBlocked">
+                <span *ngIf="c.lastMessageSenderName" class="font-medium text-gray-700 dark:text-gray-300">{{ c.lastMessageSenderName }}: </span>
+                {{ !c?.isDeleted && c?.isBlocked ? 'Conversation blocked' : (c.lastMessageContent || 'No messages yet') }}
+              </p>
+              <p class="text-xs text-gray-400 truncate" *ngIf="c?.isDeleted">'User account deactivated'</p>
+              
+              <span *ngIf="c.unreadCount > 0 && !c.isBlocked && !c.isDeleted" 
+                    class="flex items-center justify-center bg-blue-600 text-white text-[10px] font-bold min-w-[20px] h-5 px-1.5 rounded-full shadow-sm animate-pulse">
+                {{ c.unreadCount > 99 ? '99+' : c.unreadCount }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="hasMore" class="p-4">
+        <button (click)="loadMore()" [disabled]="loading" class="w-full py-2 text-sm text-blue-500 hover:underline">
+          {{ loading ? 'Loading...' : 'Load more' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 flex flex-col h-screen bg-gray-50 dark:bg-[#050b1d] relative overflow-hidden"
+       [class.hidden]="!isChatSelectedOnMobile() && isMobileView()">
+    
+    <router-outlet></router-outlet>
+
+    <div *ngIf="router.url === '/chats' || router.url === '/'" 
+         class="hidden lg:flex absolute inset-0 items-center justify-center p-6">
+      <div class="text-center">
+        <div class="bg-gray-100 dark:bg-[#0c1a3d] p-6 rounded-full inline-block mb-4 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        </div>
+        <h2 class="text-xl font-medium text-gray-700 dark:text-gray-300">Select a chat to start messaging</h2>
+        <p class="text-gray-500 mt-2">Connect with your friends and start a conversation.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-chat-modal #newGroupModal (conversationCreated)="load(false)"></app-chat-modal>

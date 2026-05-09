@@ -1,0 +1,20 @@
+/* Wave Keyframes */
+@reference 'C:\Users\ADMIN\Projects\ProxiSync\frontend\proxisync-ui\src\styles.css';
+@keyframes wave-move {
+  0% { transform: translate3d(-90px, 0, 0); }
+  100% { transform: translate3d(85px, 0, 0); }
+}
+
+.animate-wave-slow {
+  animation: wave-move 20s cubic-bezier(.55, .5, .45, .5) infinite;
+}
+
+.animate-wave-mid {
+  animation: wave-move 13s cubic-bezier(.55, .5, .45, .5) infinite;
+  animation-delay: -2s;
+}
+
+.animate-wave-fast {
+  animation: wave-move 7s cubic-bezier(.55, .5, .45, .5) infinite;
+  animation-delay: -5s;
+}

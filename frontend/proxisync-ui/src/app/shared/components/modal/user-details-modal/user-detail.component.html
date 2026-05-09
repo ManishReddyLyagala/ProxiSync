@@ -1,0 +1,277 @@
+<div
+  class="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+
+  <div
+    class="bg-white dark:bg-gray-800 w-full max-w-md sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-full sm:h-auto sm:max-h-[90vh] transform animate-in zoom-in-95 duration-200">
+
+    <div class="h-28 sm:h-32 bg-gradient-to-br from-blue-600 to-indigo-700 relative flex-shrink-0 z-0">
+      <button (click)="closeModal()"
+        class="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-all backdrop-blur-md z-50">
+        <i class="material-icons text-base">close</i>
+      </button>
+    </div>
+
+    <div class="relative flex-shrink-0 z-20 px-6 text-center">
+      <div class="-mt-14 inline-block relative">
+
+        <ng-container *ngIf="type === 'Direct'">
+          <img [src]="getProfileUrl(selectedUser.profilePictureUrl, selectedUser.displayName)"
+            class="w-28 h-28 rounded-3xl object-cover ring-4 ring-white dark:ring-gray-800 shadow-xl">
+          <span *ngIf="selectedUser.isOnline"
+            class="absolute bottom-1.5 right-1.5 w-6 h-6 bg-green-500 border-4 border-white dark:border-gray-800 rounded-full">
+          </span>
+        </ng-container>
+
+        <ng-container *ngIf="type === 'Group' && showAddParticipantView == false">
+          <div
+            class="w-28 h-28 bg-gray-900 dark:bg-gray-700 rounded-3xl flex items-center justify-center ring-4 ring-white dark:ring-gray-800 shadow-xl p-4">
+            <svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="mt-4 mb-3" *ngIf="showAddParticipantView == false">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white truncate px-4 leading-tight">
+          {{ type === 'Direct' ? (selectedUser.displayName || selectedUser.username) : groupDetails()?.name }}
+        </h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+          {{ type === 'Direct' ? '@' + selectedUser.username : ('Group · ' + groupDetails()?.participants?.length + '
+          Members') }}
+        </p>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-6">
+
+      <ng-container *ngIf="type === 'Direct'">
+        <p *ngIf="selectedUser.bio" class="text-sm text-gray-600 dark:text-gray-300 italic text-center mb-6 px-4">
+          "{{ selectedUser.bio }}"
+        </p>
+
+        <div class="space-y-4 pb-6">
+          <div
+            class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/40 rounded-2xl border border-gray-100 dark:border-gray-700">
+            <div
+              class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
+              <i class="material-icons">email</i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Email</p>
+              <p class="text-sm text-gray-800 dark:text-gray-200 truncate">{{ selectedUser.email || 'N/A' }}</p>
+            </div>
+            <button (click)="copyToClipboard(selectedUser.email)"
+              class="p-2 text-gray-400 hover:text-blue-500 transition-colors">
+              <i class="material-icons text-xl">{{ isCopied() ? 'check' : 'content_copy' }}</i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div
+              class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/40 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div
+                class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg">
+                <i class="material-icons text-sm">history</i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Last Seen</p>
+                <p class="text-xs text-gray-800 dark:text-gray-200 truncate">
+                  {{ selectedUser.isOnline ? 'Online' : (selectedUser.lastSeen | date:'shortTime') }}
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/40 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div
+                class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">
+                <i class="material-icons text-sm">calendar_today</i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Joined</p>
+                <p class="text-xs text-gray-800 dark:text-gray-200 truncate">{{ selectedUser.createdAt | date:'MMM yyyy'
+                  }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="type === 'Group'">
+        <div *ngIf="isLoading()" class="py-10 flex justify-center">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+
+        <div *ngIf="!isLoading()" class="animate-in fade-in duration-300 relative">
+
+          <div class="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-gray-800 py-2 z-10">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Participants</p>
+
+            <div class="relative">
+              <button *ngIf="isAdmin()" (click)="openAddParticipant()"
+                class="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase">
+                <i class="material-icons text-sm">person_add</i>
+                Add Member
+              </button>
+
+              <div *ngIf="showAddParticipantView"
+                class="fixed inset-0 z-[70] bg-white animate-in fade-in duration-200 dark:bg-gray-800 flex flex-col animate-in zoom-in-95
+                    lg:fixed lg:inset-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2  backdrop-blur-sm
+                    lg:w-[400px] lg:h-[550px] lg:max-h-[90vh] lg:rounded-3xl lg:shadow-[0_20px_50px_rgba(0,0,0,0.3)] lg:border lg:border-gray-100 lg:dark:border-gray-700">
+
+                <div
+                  class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800 rounded-t-3xl">
+                  <h4 class="text-sm font-bold dark:text-white uppercase tracking-tight">Add Members</h4>
+                  <button (click)="showAddParticipantView = false"
+                    class="p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <i class="material-icons text-base">close</i>
+                  </button>
+                </div>
+
+                <div class="px-6 py-4 space-y-4 bg-gray-50/50 dark:bg-transparent">
+                  <div class="relative">
+                    <input [(ngModel)]="searchTerm" (input)="filterFriends()" placeholder="Search contacts..."
+                      class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-700 rounded-xl border-none text-xs dark:text-white focus:ring-2 ring-blue-500 outline-none shadow-sm">
+                    <i class="material-icons absolute left-3 top-2.5 text-gray-400 text-lg">search</i>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer group" (click)="toggleSelectAll()">
+                      <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
+                        [ngClass]="isAllSelected() ? 'bg-blue-600 border-blue-600' : 'border-gray-300 dark:border-gray-600 group-hover:border-blue-400'">
+                        <i *ngIf="isAllSelected()" class="material-icons text-white text-[12px]">done</i>
+                      </div>
+                      <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase">Select All</span>
+                    </label>
+                    <div class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <span
+                        class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">{{selectedParticipants.size}}
+                        Selected</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0 px-2">
+                  <div *ngFor="let friend of filteredFriends" (click)="toggleSelection(friend)"
+                    class="flex flex-col gap-2 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/40 cursor-pointer transition-colors rounded-2xl">
+
+                    <div class="flex items-center gap-3">
+                      <div class="relative">
+                        <img [src]="getProfileUrl(friend.profilePictureUrl)" class="w-10 h-10 rounded-xl object-cover">
+                        <!-- <div *ngIf="selectedParticipants.has(friend.userId)" 
+                       class="absolute -bottom-1 -right-1 bg-blue-600 rounded-full  border-2 border-white dark:border-gray-800 p-0.5 animate-in zoom-in">
+                    <i class="material-icons text-white text-[8px]">check</i>
+                  </div> -->
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-xs text-gray-800 dark:text-gray-200 truncate">{{friend.userName}}
+                        </p>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Available</p>
+                      </div>
+                      <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                        [ngClass]="selectedParticipants.has(friend.userId) ? 'bg-blue-600 border-blue-600 shadow-sm shadow-blue-500/50' : 'border-gray-300 dark:border-gray-600'">
+                        <i *ngIf="selectedParticipants.has(friend.userId)"
+                          class="material-icons text-white text-[10px] text-center">done</i>
+                      </div>
+                    </div>
+
+                    <div *ngIf="selectedParticipants.has(friend.userId)"
+                      class="ml-12 flex items-center gap-2 animate-in slide-in-from-left-2 duration-200">
+                      <div class="flex bg-gray-100 dark:bg-gray-900 p-1 rounded-lg">
+                        <button *ngFor="let r of ROLES" (click)="setRole(friend.userId, r.value, $event)" [ngClass]="selectedParticipants.get(friend.userId)?.role === r.value 
+                                     ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' 
+                                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                          class="px-3 py-1 text-[9px] font-bold rounded-md transition-all uppercase">
+                          {{r.label}}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="filteredFriends.length <= 0"
+                    class="flex flex-col items-center justify-center py-12 px-6 text-center animate-in fade-in zoom-in duration-300">
+
+                    <div
+                      class="w-16 h-16 bg-gray-100 dark:bg-gray-700/50 rounded-full flex items-center justify-center mb-4">
+                      <i class="material-icons text-3xl text-gray-400 dark:text-gray-500">person_search</i>
+                    </div>
+
+                    <p class="text-sm font-bold text-gray-700 dark:text-gray-200 mb-1">
+                      No users found
+                    </p>
+
+                    <p class="text-xs text-gray-400 dark:text-gray-500 max-w-[200px] leading-relaxed">
+                      Try clearing your search or connect with more friends to add them here.
+                    </p>
+
+                    <button *ngIf="searchTerm" (click)="searchTerm = ''; filterFriends()"
+                      class="mt-4 text-xs font-bold cursor-pointer text-blue-600 hover:text-blue-700 uppercase tracking-widest">
+                      Clear Search
+                    </button>
+                  </div>
+                </div>
+
+                <div class="p-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-3xl">
+                  <button [disabled]="selectedParticipants.size === 0" (click)="confirmAddParticipants()"
+                    class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:grayscale text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="material-icons text-sm">group_add</i>
+                    ADD PARTICIPANTS
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3 pb-4">
+            <div *ngFor="let p of groupDetails()?.participants"
+              class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-xl transition-colors">
+              <img [src]="getProfileUrl(p.profilePictureUrl, p.displayName)"
+                class="w-10 h-10 rounded-full object-cover shadow-sm">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold dark:text-gray-200 truncate">{{ p.displayName }}</p>
+                <span
+                  class="text-[10px] px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 uppercase font-bold">
+                  {{ p.role }}
+                </span>
+              </div>
+
+              <button *ngIf="isAdmin() && p.userId !== currentUserId" (click)="removeParticipant(p.userId)"
+                class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                <i class="material-icons">person_remove</i>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="py-4 space-y-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-transparent -mx-6 px-6">
+            <button (click)="exitGroup()"
+              class="w-full flex items-center justify-center gap-2 p-3 text-orange-600 bg-orange-50 dark:bg-orange-900/10 rounded-2xl font-bold hover:bg-orange-100 transition-all active:scale-95">
+              <i class="material-icons text-lg">logout</i>
+              Exit Group
+            </button>
+            <button *ngIf="isAdmin()" (click)="deleteGroup()"
+              class="w-full flex items-center justify-center gap-2 p-3 text-red-600 bg-red-50 dark:bg-red-900/10 rounded-2xl font-bold hover:bg-red-100 transition-all active:scale-95">
+              <i class="material-icons text-lg">delete_forever</i>
+              Delete Group Permanently
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 flex-shrink-0">
+      <button (click)="closeModal()"
+        class="w-full py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-2xl hover:bg-gray-200 transition-all active:scale-95">
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>

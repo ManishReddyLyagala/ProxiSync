@@ -1,0 +1,11 @@
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-in.slide-in-from-bottom {
+  animation: slide-up 0.3s ease-out;
+}

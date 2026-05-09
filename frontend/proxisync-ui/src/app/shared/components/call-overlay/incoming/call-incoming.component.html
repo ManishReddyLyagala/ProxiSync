@@ -1,0 +1,42 @@
+<div
+  class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-gray-200 dark:border-slate-800 overflow-hidden"
+>
+  <div class="p-6 text-center">
+    <div class="w-20 h-20 mx-auto rounded-full overflow-hidden ring-4 ring-blue-500/20 shadow-md">
+      <img
+        [src]="'https://png.pngtree.com/png-vector/20231019/ourmid/pngtree-user-profile-avatar-png-image_10211467.png'"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <h2 class="mt-4 text-xl font-bold text-indigo-500 dark:text-white uppercase">
+      {{ call()?.callerName || 'Incoming call' }}
+    </h2>
+
+    <div class="mt-2 text-sm text-slate-600 dark:text-slate-300" *ngIf="call()?.isGroupCall">
+      <b>Group Call</b>
+    </div>
+
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      {{ call()?.type === 'Video' ? 'Video call' : 'Audio call' }}
+    </p>
+  </div>
+
+  <div class="px-6 pb-6 flex items-center justify-center gap-5">
+    <button
+      (click)="reject()"
+      class="w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+      title="Reject"
+    >
+      <span class="material-icons">call_end</span>
+    </button>
+
+    <button
+      (click)="accept()"
+      class="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+      title="Accept"
+    >
+      <span class="material-icons">call</span>
+    </button>
+  </div>
+</div>

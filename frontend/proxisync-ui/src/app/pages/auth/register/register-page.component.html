@@ -1,0 +1,87 @@
+<div class="min-h-screen w-full bg-white relative overflow-hidden font-sans flex items-center justify-center py-10">
+  
+  <div class="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-br from-cyan-400 to-blue-500 z-0">
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+      <svg class="relative block w-[calc(100%+1.3px)] h-20 md:h-32" viewBox="0 24 150 28" preserveAspectRatio="none">
+        <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+        <g>
+          <use href="#gentle-wave" xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" class="animate-wave-slow" />
+          <use href="#gentle-wave" xlink:href="#gentle-wave" x="48" y="7" fill="#ffffff" class="animate-wave-fast" />
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="absolute top-6 left-6 z-20 flex items-center gap-2">
+    <div class="w-9 h-9 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg flex items-center justify-center shadow-lg">
+      <i class="material-icons text-white text-xl">sms</i>
+    </div>
+    <span class="text-lg font-black text-white tracking-tighter uppercase">ProxiSync</span>
+  </div>
+
+  <div class="relative z-10 w-full max-w-[420px] px-6 animate-in fade-in zoom-in duration-500">
+    <div class="bg-white rounded-[32px] shadow-[0_15px_50px_-12px_rgba(0,0,0,0.1)] p-8 border border-gray-50">
+      
+      <div class="mb-6 flex justify-between items-end">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Register</h2>
+          <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Join the community</p>
+        </div>
+        
+        <div class="relative group">
+          <input type="file" (change)="onFileSelected($event)" class="hidden" #fileInput accept="image/*">
+          <div (click)="fileInput.click()" class="w-16 h-16 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer overflow-hidden hover:border-blue-400 transition-all">
+            <img *ngIf="imagePreview" [src]="imagePreview" class="w-full h-full object-cover">
+            <i *ngIf="!imagePreview" class="material-icons text-gray-300">add_a_photo</i>
+          </div>
+          <span class="text-[8px] font-bold text-gray-400 uppercase absolute -bottom-5 right-0">Photo (Opt)</span>
+        </div>
+      </div>
+
+      <form (ngSubmit)="submit()" class="space-y-5">
+        <div class="group relative">
+          <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest absolute -top-2.5 left-0 group-focus-within:text-blue-500">Full Name</label>
+          <input type="text" name="displayName" [(ngModel)]="registerData.displayName" placeholder="John Doe"
+                 class="w-full mt-1 pt-3 pb-1.5 border-b border-gray-100 focus:border-blue-400 outline-none transition-all text-sm text-gray-700 font-medium placeholder:text-gray-200 bg-transparent">
+        </div>
+
+        <div class="group relative">
+          <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest absolute -top-2.5 left-0 group-focus-within:text-blue-500">Username *</label>
+          <input type="text" name="username" [(ngModel)]="registerData.username" placeholder="johndoe123"
+                 class="w-full mt-1 pt-3 pb-1.5 border-b border-gray-100 focus:border-blue-400 outline-none transition-all text-sm text-gray-700 font-medium placeholder:text-gray-200 bg-transparent">
+        </div>
+
+        <div class="group relative">
+          <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest absolute -top-2.5 left-0 group-focus-within:text-blue-500">Email *</label>
+          <input type="email" name="email" [(ngModel)]="registerData.email" placeholder="john@example.com"
+                 class="w-full mt-1 pt-3 pb-1.5 border-b border-gray-100 focus:border-blue-400 outline-none transition-all text-sm text-gray-700 font-medium placeholder:text-gray-200 bg-transparent">
+        </div>
+
+        <div class="group relative">
+          <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest absolute -top-2.5 left-0 group-focus-within:text-blue-500">Password *</label>
+          <input type="password" name="password" [(ngModel)]="registerData.password" placeholder="••••••••"
+                 class="w-full mt-1 pt-3 pb-1.5 border-b border-gray-100 focus:border-blue-400 outline-none transition-all text-sm text-gray-700 font-medium placeholder:text-gray-200 bg-transparent">
+        </div>
+
+        <div class="pt-4">
+          <button type="submit" [disabled]="loading"
+                  class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-bold rounded-xl shadow-md transition-all active:scale-[0.97] flex items-center justify-center uppercase tracking-widest text-[10px] disabled:opacity-70">
+            <span *ngIf="!loading">Create Account</span>
+            <svg *ngIf="loading" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="error" class="bg-red-50 text-red-600 text-[10px] font-bold p-3 rounded-xl mt-4 text-center animate-in fade-in slide-in-from-top-1">
+        {{error}}
+      </div>
+
+      <p class="mt-8 text-center text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
+        Already have an account? <a routerLink="/login" class="text-blue-500 hover:underline ml-1">Login</a>
+      </p>
+    </div>
+  </div>
+</div>

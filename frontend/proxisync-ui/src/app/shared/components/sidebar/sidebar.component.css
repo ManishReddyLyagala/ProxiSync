@@ -1,0 +1,21 @@
+@reference 'C:\Users\ADMIN\Projects\ProxiSync\frontend\proxisync-ui\src\styles.css';
+.nav-item {
+  @apply relative flex items-center p-3 rounded-xl transition-all duration-200 
+         text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 w-full;
+}
+
+.active-link {
+  @apply bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400;
+}
+
+.tooltip {
+  /* Position it to the right of the 16px (w-16) bar */
+  @apply absolute left-14 scale-0 group-hover:scale-100 
+         bg-slate-800 text-white text-[10px] px-2 py-1 rounded 
+         transition-all duration-200 origin-left z-[100] 
+         pointer-events-none shadow-lg opacity-0 group-hover:opacity-100;
+}
+
+.material-icons {
+  @apply flex-shrink-0;
+}

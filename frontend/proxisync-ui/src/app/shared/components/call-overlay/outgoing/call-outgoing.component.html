@@ -1,0 +1,61 @@
+<div class="fixed inset-0 bg-slate-950 flex flex-col font-sans antialiased text-slate-200">
+
+  <header class="z-10 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/60 to-transparent">
+    <div class="flex items-center gap-3">
+      <div class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-wide uppercase text-white/90">
+          {{ call()?.type }} Call — Calling...
+        </h1>
+        <p class="text-xs text-white/50">
+          Waiting for them to pick up
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center px-6">
+    <div class="text-center">
+      <div class="w-24 h-24 rounded-full bg-white/10 border border-white/10 flex items-center justify-center mx-auto">
+        <img
+        [src]="'https://png.pngtree.com/png-vector/20231019/ourmid/pngtree-user-profile-avatar-png-image_10211467.png'"
+        class="w-full h-full object-cover"
+      />
+      </div>
+      <h1 class="mt-5 text-2xl font-bold uppercase text-indigo-500">
+          {{ call()?.conversationName }}
+        </h1>
+      <h2 class="mt-5 text-xl font-semibold text-white/90">
+        Calling...
+      </h2>
+
+      <p class="mt-2 text-sm text-white/50">
+        If they don’t answer, you can cancel anytime.
+      </p>
+
+      <div class="mt-8 flex items-center justify-center gap-4">
+        <button (click)="toggleMic()"
+          [class.bg-white]="micEnabled()" [class.text-slate-900]="micEnabled()"
+          [class.bg-slate-800]="!micEnabled()" [class.text-white]="!micEnabled()"
+          class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 hover:opacity-90">
+          <span class="material-icons">{{ micEnabled() ? 'mic' : 'mic_off' }}</span>
+        </button>
+
+        <button (click)="toggleVideo()"
+          [class.bg-white]="videoEnabled()" [class.text-slate-900]="videoEnabled()"
+          [class.bg-slate-800]="!videoEnabled()" [class.text-white]="!videoEnabled()"
+          class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 hover:opacity-90">
+          <span class="material-icons">{{ videoEnabled() ? 'videocam' : 'videocam_off' }}</span>
+        </button>
+
+        <button (click)="cancel()"
+          class="w-16 h-12 rounded-2xl bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-red-500/20">
+          <span class="material-icons">call_end</span>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

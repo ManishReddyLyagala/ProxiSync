@@ -1,0 +1,122 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --muted: #6b7280;
+}
+.dark {
+  --bg: #0b1220;
+  --panel: #071028;
+  --muted: #94a3b8;
+}
+html, body, app-root { height: 100%; }
+body { background-color: var(--bg); color: inherit; }
+.message-bubble { max-width: 70%; word-break: break-word; }
+.scroll-auto { overflow:auto; }
+
+/* Global Wave Animations */
+@keyframes wave-move {
+  0% { transform: translate3d(-90px, 0, 0); }
+  100% { transform: translate3d(85px, 0, 0); }
+}
+
+.animate-wave-slow {
+  /* Using !important to ensure it overrides any local encapsulation issues */
+  animation: wave-move 20s cubic-bezier(.55, .5, .45, .5) infinite !important;
+}
+
+.animate-wave-mid {
+  animation: wave-move 13s cubic-bezier(.55, .5, .45, .5) infinite !important;
+  animation-delay: 2s;
+}
+
+.animate-wave-fast {
+  animation: wave-move 7s cubic-bezier(.55, .5, .45, .5) infinite !important;
+  animation-delay: 5s;
+}
+
+
+/* css for speaker/mic */
+/* slash-line logic */
+.slash-line {
+  stroke-dasharray: 32;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+  opacity: 1;
+}
+
+/* When unmuted, the slash line "retracts" and fades */
+.slash-line:not(.slashed) {
+  stroke-dashoffset: 32;
+  opacity: 0;
+}
+
+/* Sound Waves logic */
+.wave {
+  opacity: 0;
+  transform-origin: center;
+  transition: opacity 0.3s ease;
+}
+
+.wave.active {
+  opacity: 1;
+  animation: wave-pulse 2s infinite ease-in-out;
+}
+
+.delay-100 {
+  animation-delay: 0.2s !important;
+}
+
+/* Beautiful pulsing effect for the waves */
+@keyframes wave-pulse {
+  0% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.3; }
+}
+
+/* chat page */
+/* Ultra-thin beautiful chat list scrollbar */
+:host ::ng-deep .chat-list-scroll::-webkit-scrollbar {
+  width: 4px;  /* ← THINNER */
+}
+
+:host ::ng-deep .chat-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;  /* Rounded track */
+}
+
+:host ::ng-deep .chat-list-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #9ca3af20 0%, #6b728040 100%);  /* Glass effect */
+  border-radius: 10px;  /* Perfect pill shape */
+  border: 1px solid rgba(255,255,255,0.2);  /* Subtle glow border */
+  transition: all 0.2s ease;  /* Smooth hover */
+}
+
+:host ::ng-deep .chat-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9ca3af40 0%, #6b728060 100%);
+  transform: scale(1.1);  /* Micro-expand on hover */
+  border-color: rgba(255,255,255,0.4);
+}
+
+:host ::ng-deep .chat-list-scroll::-webkit-scrollbar-thumb:active {
+  background: #6b7280;  /* Solid on click */
+}
+
+/* Firefox support */
+:host ::ng-deep .chat-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #8c919940 transparent;
+}
+
+/* Dark mode perfection */
+.dark :host ::ng-deep .chat-list-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #47556930 0%, #33415550 100%);
+  border-color: rgba(0,0,0,0.3);
+}
+
+.dark :host ::ng-deep .chat-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #47556950 0%, #33415570 100%);
+  border-color: rgba(0,0,0,0.5);
+}

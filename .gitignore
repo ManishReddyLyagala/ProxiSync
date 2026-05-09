@@ -1,0 +1,96 @@
+# =========================
+# FRONTEND (Angular)
+# =========================
+frontend/proxisync-ui/node_modules/
+frontend/proxisync-ui/dist/
+frontend/proxisync-ui/.angular/
+frontend/proxisync-ui/coverage/
+
+# =========================
+# Build outputs
+# =========================
+dist/
+bin/
+obj/
+publish/
+
+# =========================
+# Node
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# =========================
+# Angular
+# =========================
+.angular/
+out-tsc/
+
+# =========================
+# .NET Backend
+# =========================
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# Runtime uploaded files
+backend/GatewayAPI/wwwroot/attachments/*
+backend/GatewayAPI/wwwroot/uploads/*
+
+# Keep folders structure
+!backend/GatewayAPI/wwwroot/attachments/.gitkeep
+!backend/GatewayAPI/wwwroot/uploads/.gitkeep
+# =========================
+# Environment / Secrets
+# =========================
+**/appsettings.Production.json
+**/appsettings.Development.json
+**/.env
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# VSCode
+# =========================
+.vscode/
+
+# =========================
+# Visual Studio
+# =========================
+.vs/
+*.user
+*.suo
+
+# =========================
+# Test folders
+# =========================
+frontend/signalr-test/node_modules/
+frontend/signalr-test/dist/
+
+# =========================
+# Git submodules accidental
+# =========================
+**/.git
+
+# =========================
+# Optional
+# =========================
+todo_lists.txt

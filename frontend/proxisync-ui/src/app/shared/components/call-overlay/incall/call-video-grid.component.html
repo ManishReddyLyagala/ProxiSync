@@ -1,0 +1,76 @@
+<div class="h-full w-full flex flex-col overflow-hidden bg-slate-950 p-2 gap-2 lg:gap-4"
+  [class.lg:flex-row]="localIsSharing || pinnedTileId()">
+
+  <div *ngIf="localIsSharing || pinnedTileId()"
+    class="relative flex-[3] lg:flex-[5] w-full bg-black rounded-2xl overflow-hidden border border-white/5 group transition-all duration-500">
+    
+    <ng-container *ngFor="let t of tiles">
+      <div *ngIf="t.isScreenShare || t.id === pinnedTileId()" class="w-full h-full relative">
+        <button (click)="togglePin(t.id)"
+class="absolute top-4 right-4 z-30 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/60 backdrop-blur-md text-white/50 hover:text-white border border-white/5 transition-all">
+          <span class="material-icons text-sm" [style.transform]="pinnedTileId() === t.id ? 'rotate(45deg)' : 'rotate(0deg)'">
+            push_pin
+          </span>
+        </button>
+
+        <video [id]="getVideoId(t)" 
+               class="w-full h-full object-contain bg-black" autoplay playsinline></video>
+
+        <div class="absolute bottom-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-lg text-[11px] text-white/80 border border-white/10 z-20 pointer-events-none">
+          <div *ngIf="activeSpeakerId() === t.participant.identity" class="flex gap-0.5 items-end h-3 w-3">
+             <div class="w-0.5 h-full bg-emerald-400 animate-bounce"></div>
+             <div class="w-0.5 h-2/3 bg-emerald-400 animate-bounce"></div>
+          </div>
+          <span class="material-icons text-sm" [class.text-emerald-400]="t.participant.isMicrophoneEnabled" [class.text-red-500]="!t.participant.isMicrophoneEnabled">
+            {{ t.participant.isMicrophoneEnabled ? 'mic' : 'mic_off' }}
+          </span>
+          <span class="font-medium truncate max-w-[120px]">{{ t.name }}</span>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="transition-all duration-500 relative"
+    [ngClass]="(localIsSharing || pinnedTileId()) 
+      ? 'flex-none h-32 lg:h-full lg:flex-[1.2] flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto pb-6 lg:pb-0 lg:pr-2' 
+      : 'flex-1 grid gap-3 overflow-y-auto p-4'"
+    [class.grid-cols-2]="!localIsSharing && !pinnedTileId() && (tiles.length === 2 || tiles.length === 4)"
+    [class.grid-cols-3]="!localIsSharing && !pinnedTileId() && (tiles.length === 3 || tiles.length >= 5)">
+
+    <ng-container *ngFor="let t of paginatedTiles; trackBy: trackById">
+      <div *ngIf="t.id !== pinnedTileId() && (!t.isScreenShare || !localIsSharing)"
+        class="relative rounded-xl lg:rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-lg cursor-pointer group transition-all duration-300 shrink-0"
+        [ngClass]="{
+         'h-24 w-36 lg:h-40 lg:w-full': (localIsSharing || pinnedTileId()),
+         'w-full aspect-video': !(localIsSharing || pinnedTileId()),
+         'speaker-highlight ring-emerald-500': activeSpeakerId() === t.participant.identity
+        }" (click)="togglePin(t.id)">
+
+        <video *ngIf="t.isVideoOn" [id]="getVideoId(t)" class="w-full h-full object-cover" autoplay playsinline [muted]="t.isLocal"></video>
+
+        <div *ngIf="!t.isVideoOn" class="w-full h-full flex items-center justify-center bg-slate-800">
+          <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white/30">
+            <span class="material-icons">person</span>
+          </div>
+        </div>
+
+        <div class="absolute bottom-1.5 left-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[10px] border border-white/5">
+          <span class="material-icons text-[12px]" [class.text-red-500]="!t.participant.isMicrophoneEnabled">
+            {{ t.participant.isMicrophoneEnabled ? 'mic' : 'mic_off' }}
+          </span>
+          <span class="font-medium truncate max-w-[60px] lg:max-w-none">{{ t.name }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="!localIsSharing && !pinnedTileId() && tiles.length > pageSize"
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <button (click)="currentPage = 0" [disabled]="currentPage === 0" class="p-2 bg-slate-800 rounded-full disabled:opacity-30">
+        <span class="material-icons text-white">chevron_left</span>
+      </button>
+      <button (click)="currentPage = 1" [disabled]="tiles.length <= pageSize" class="p-2 bg-slate-800 rounded-full disabled:opacity-30">
+        <span class="material-icons text-white">chevron_right</span>
+      </button>
+    </div>
+  </div>
+</div>

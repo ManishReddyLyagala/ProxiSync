@@ -1,0 +1,159 @@
+<div class="h-screen w-full bg-white dark:bg-[#0b141a] text-slate-900 dark:text-slate-100 overflow-hidden flex flex-col font-sans select-none">
+  
+  <header class="px-6 py-5 bg-white/80 dark:bg-[#111b21]/80 backdrop-blur-md border-b dark:border-white/5 flex justify-between items-center z-30">
+    <div>
+      <h1 class="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">Calls</h1>
+      <p class="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">Recent Activity</p>
+    </div>
+    <button (click)="showContactPicker = true" 
+            class="p-2.5 rounded-xl bg-indigo-50 dark:bg-emerald-500/10 text-indigo-600 dark:text-emerald-500 hover:scale-105 transition-all">
+      <span class="material-icons text-2xl">add_ic_call</span>
+    </button>
+  </header>
+
+  <div class="px-6 py-4 space-y-4 border-b dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.01]">
+    <div class="relative max-w-2xl">
+      <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+      <input type="text" [(ngModel)]="callHistorySearchQuery" (input)="filterCalls()" placeholder="Search by name..." 
+             class="w-full pl-12 pr-4 py-2.5 bg-slate-100 dark:bg-[#202c33] border-none rounded-xl outline-none text-sm font-medium">
+    </div>
+    
+    <div class="flex gap-2">
+      <button *ngFor="let f of ['All', 'Missed', 'Rejected', 'Ended']" (click)="activeFilter = f; filterCalls()"
+              [class]="activeFilter === f ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-[#202c33] text-slate-500'"
+              class="px-5 py-1.5 rounded-full text-xs font-semibold transition-all">
+        {{ f }}
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto custom-scrollbar">
+    <div *ngIf="filteredLogs.length > 0; else noResults" class="divide-y dark:divide-white/5">
+      
+      <div *ngFor="let call of filteredLogs" class="group flex items-center gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-[#202c33]/40 transition-all cursor-pointer">
+        
+        <div class="relative flex-shrink-0">
+          <div class="w-12 h-12 rounded-2xl overflow-hidden shadow-sm border dark:border-white/10">
+            <img [src]="getProfilePicUrl(call.profilePictureUrl)" class="w-full h-full object-cover">
+          </div>
+          <div *ngIf="call.isGroupCall" class="absolute -bottom-1 -right-1 bg-indigo-600 p-0.5 rounded-md border-2 border-white dark:border-[#0b141a] flex items-center justify-center">
+            <span class="material-icons text-[10px] text-white">groups</span>
+          </div>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-baseline">
+            <h3 class="font-semibold text-slate-800 dark:text-slate-200 truncate text-sm lg:text-base">{{ call.displayName }}</h3>
+            <span class="text-[10px] font-medium text-slate-400 uppercase">{{ call.startedAt | date:'h:mm a' }}</span>
+          </div>
+          
+          <div class="flex items-center gap-2 mt-0.5">
+            <span *ngIf="!call.isGroupCall" 
+                  class="text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-tighter"
+                  [ngClass]="call.status === 'Missed' ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'">
+              {{ call.status }}
+            </span>
+            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">
+              {{ call.type }} • {{ call.startedAt | date:'MMM d' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex gap-1 items-center">
+          <button *ngIf="call.isGroupCall" (click)="$event.stopPropagation(); openParticipantModal(call)"
+                  class="p-2 rounded-xl text-slate-400 hover:text-indigo-500 transition-all" title="View People">
+            <span class="material-icons text-xl">people_outline</span>
+          </button>
+          <button (click)="onStartCall(call, 'Audio')" class="p-2 rounded-xl text-slate-400 hover:text-emerald-500 transition-all">
+            <span class="material-icons text-xl">call</span>
+          </button>
+          <button (click)="onStartCall(call, 'Video')" class="p-2 rounded-xl text-slate-400 hover:text-indigo-500 transition-all">
+            <span class="material-icons text-xl">videocam</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="selectedCallForModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+  <div (click)="selectedCallForModal = null" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="relative w-full max-w-sm bg-white dark:bg-[#111b21] rounded-3xl shadow-2xl p-6 animate-in zoom-in-95 duration-200">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-sm font-bold uppercase tracking-widest">Attendance</h2>
+      <button (click)="selectedCallForModal = null" class="text-slate-400 hover:text-red-500"><span class="material-icons">close</span></button>
+    </div>
+    <div class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+      <div *ngFor="let p of selectedCallForModal.participants" class="flex items-center gap-3">
+        <img [src]="p.profilePictureUrl" class="w-10 h-10 rounded-xl object-cover">
+        <div class="flex-1">
+          <p class="text-sm font-semibold">{{ p.displayName }}</p>
+          <p class="text-[10px] font-black uppercase" [ngClass]="p.status === 'Joined' ? 'text-emerald-500' : 'text-red-500'">{{ p.status }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showContactPicker" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
+  <div (click)="showContactPicker = false" class="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"></div>
+
+  <div class="relative w-full max-w-md bg-white dark:bg-[#111b21] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-200">
+    
+    <header class="px-6 py-4 border-b dark:border-white/5 flex items-center justify-between">
+      <h2 class="text-lg font-bold">New Call</h2>
+      <button (click)="showContactPicker = false" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+        <span class="material-icons text-slate-400">close</span>
+      </button>
+    </header>
+
+    <div class="p-4">
+      <div class="relative">
+        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+        <input type="text" [(ngModel)]="contactSearchQuery" (input)="filterContacts()" placeholder="Search contacts..." 
+               class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-[#202c33] border-none rounded-xl outline-none text-sm">
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-2 pb-4 space-y-1 custom-scrollbar">
+      <div *ngFor="let contact of filteredContacts" 
+           class="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#202c33] transition-all group">
+        
+        <div class="relative flex-shrink-0">
+          <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 dark:bg-white/5">
+            <img [src]="getProfilePicUrl(contact.profilePictureUrl)" *ngIf="contact.profilePictureUrl" class="w-full h-full object-cover">
+            <div *ngIf="!contact.profilePictureUrl" class="w-full h-full flex items-center justify-center">
+                <span class="material-icons text-slate-400">person</span>
+            </div>
+          </div>
+          <span  class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#111b21] rounded-full"></span>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <h4 class="font-semibold text-sm truncate">{{ contact.userName }}</h4>
+          <p class="text-[10px] text-slate-500">Available</p>
+        </div>
+
+        <div class="flex gap-1">
+          <button (click)="initiateNewCall(contact, 'Audio')" class="p-2 rounded-xl text-slate-400 hover:text-emerald-500 transition-all">
+            <span class="material-icons text-base">call</span>
+          </button>
+          <button (click)="initiateNewCall(contact, 'Video')" class="p-2 rounded-xl text-slate-400 hover:text-indigo-500 transition-all">
+            <span class="material-icons text-base">videocam</span>
+          </button>
+        </div>
+      </div>
+      
+      <div *ngIf="filteredContacts.length === 0" class="py-10 text-center text-slate-400">
+        <p class="text-xs">No contacts found</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noResults>
+  <div class="flex flex-col items-center justify-center h-full text-slate-400 opacity-40">
+    <span class="material-icons text-6xl mb-2">history</span>
+    <p class="text-sm">No call history found</p>
+  </div>
+</ng-template>
