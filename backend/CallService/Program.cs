@@ -95,7 +95,7 @@ builder.Services.AddScoped<ILiveKitTokenService, LiveKitTokenService>();
 // Ring timeout background service
 builder.Services.AddHostedService<CallRingTimeoutService>();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 var app = builder.Build();
 app.UseCors("AllowAll");

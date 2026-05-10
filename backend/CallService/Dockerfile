@@ -1,18 +1,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
 WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore CallService.csproj
-RUN dotnet publish CallService.csproj -c Release -o /app/publish
+RUN dotnet restore backend/CallService/CallService.csproj
+RUN dotnet publish backend/CallService/CallService.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
-
 WORKDIR /app
 
 COPY --from=build /app/publish .
 
-EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:10000
+EXPOSE 10000
 
 ENTRYPOINT ["dotnet", "CallService.dll"]
