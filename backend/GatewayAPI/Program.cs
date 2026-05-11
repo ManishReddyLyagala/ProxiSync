@@ -93,7 +93,7 @@ builder.Services.AddSwaggerGen();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 var app = builder.Build();
-
+app.MapGet("/health", () => Results.Ok("Healthy"));
 //app.UseStaticFiles(); // For wwwroot
 var contentPath = builder.Environment.ContentRootPath;
 
@@ -129,11 +129,11 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 app.UseRouting();
 app.UseCors("AllowAll");
