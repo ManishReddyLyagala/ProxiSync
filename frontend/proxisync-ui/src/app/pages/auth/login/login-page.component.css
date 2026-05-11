@@ -1,5 +1,4 @@
 /* Wave Keyframes */
-@reference 'C:\Users\ADMIN\Projects\ProxiSync\frontend\proxisync-ui\src\styles.css';
 @keyframes wave-move {
   0% { transform: translate3d(-90px, 0, 0); }
   100% { transform: translate3d(85px, 0, 0); }
