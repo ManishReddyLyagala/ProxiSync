@@ -60,13 +60,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .SetIsOriginAllowed(_ => true); // allow WebRTC, signalR, etc
-    });
+    options.AddPolicy("AllowAll", p => p
+        .WithOrigins("https://proxisync.vercel.app")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        );
 });
 
 // Token service (Shared)
@@ -82,7 +81,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IChatClient, ChatClient>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5226/"); // Replace with your ChatService URL
+    client.BaseAddress = new Uri("https://proxysync-chatservice.onrender.com/"); // Replace with your ChatService URL
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -106,7 +105,7 @@ app.UseStaticFiles(new StaticFileOptions
     OnPrepareResponse = ctx =>
     {
         // Use "*" for testing to rule out origin mismatches
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:4200");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "https://proxisync.vercel.app");
         ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, OPTIONS");
         ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
@@ -125,15 +124,15 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads",
     OnPrepareResponse = ctx =>
     {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:4200");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "https://proxisync.vercel.app");
     }
 });
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-// }
+}
 
 app.UseRouting();
 app.UseCors("AllowAll");

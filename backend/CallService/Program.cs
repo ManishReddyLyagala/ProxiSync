@@ -79,13 +79,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .SetIsOriginAllowed(_ => true); // allow WebRTC, signalR, etc
-    });
+    options.AddPolicy("AllowAll", p => p
+        .WithOrigins("https://proxisync.vercel.app")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        );
 });
 
 // DI
@@ -101,11 +100,11 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 app.MapGet("/health", () => Results.Ok("Healthy"));
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-// }
+ }
 
 app.UseHttpsRedirection();
 
